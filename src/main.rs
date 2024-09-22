@@ -14,8 +14,8 @@ fn main() -> Result<(), Error> {
     
     let mut mediator = UserMediator::default();
     
-    let managed1 = user1.register(mediator.clone());
-    let managed2 = user2.register(mediator.clone());
+    let managed1 = user1.belong_to(mediator.clone());
+    let managed2 = user2.belong_to(mediator.clone());
     
     let reg1= mediator.register(user_id1.clone(), managed1)?;
     let reg2 = mediator.register(user_id2.clone(), managed2)?;
@@ -70,7 +70,7 @@ impl Colleague for User {
         &self.id
     }
     
-    fn register(self, bus: Self::Mediator) -> Managed<Self> {
+    fn belong_to(self, bus: Self::Mediator) -> Managed<Self> {
         Managed::new(self, bus)
     }
 }
@@ -120,7 +120,7 @@ pub trait Colleague: Sized {
     type Identifier;
     type Mediator: Mediator<Self>;
     fn id(&self) -> &Self::Identifier;
-    fn register(self, mediator: Self::Mediator) -> Managed<Self>;
+    fn belong_to(self, mediator: Self::Mediator) -> Managed<Self>;
 }
 
 pub trait Mediator<T: Colleague> {
